@@ -1,0 +1,4 @@
+Primera linea.
+Segunda linea con tildes: cañón, árbol
+Tercera linea: ñandú, camión, corazón
+Cuarta linea sin nada raro.

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<productos>
+    <producto id="P001">
+        <nombre>Portátil</nombre>
+        <precio>799.99</precio>
+    </producto>
+    <producto id="P002">
+        <nombre>Monitor</nombre>
+        <precio>199.50</precio>
+    </producto>
+    <producto id="P003">
+        <nombre>Ratón</nombre>
+        <precio>25.75</precio>
+    </producto>
+</productos>

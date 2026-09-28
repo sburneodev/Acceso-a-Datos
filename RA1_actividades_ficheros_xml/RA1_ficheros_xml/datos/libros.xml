@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<libros>
+    <libro>
+        <titulo>Programación en Java</titulo>
+        <autor>Laura Díaz</autor>
+    </libro>
+    <libro>
+        <titulo>Fundamentos de XML</titulo>
+        <autor>Carlos Ruiz</autor>
+    </libro>
+</libros>
