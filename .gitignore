@@ -1,1 +1,30 @@
-.idea
+# ==========================================
+# IntelliJ IDEA / JetBrains
+# ==========================================
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Si en tu equipo compartís ciertos ajustes de run configs o estilos:
+# !.idea/runConfigurations/
+# !.idea/codeStyles/
+
+# Compiladores y entornos comunes (Java/Kotlin/Python)
+*.class
+target/
+.gradle/
+build/
+*.pyc
+__pycache__/
+
+# Logs y volcados de error
+*.log
+hs_err_pid*
+replay_pid*
+
+# Basura del sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
