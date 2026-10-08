@@ -5,6 +5,10 @@ import java.util.Arrays;
 public  class Inventario{
     static int directoriosTotal =0;
     static int archivosTotal =0;
+    static File masReciente;
+    static long byte_reciente;
+    static long bytes_grande=0;
+    static String ficheroMasGrande="";
     public static void main(String[] args){
 
         try {
@@ -31,6 +35,8 @@ public  class Inventario{
             System.out.println("Total archivos: " + archivosTotal);
             System.out.println("Total subcarpetas: " + directoriosTotal);
             System.out.println(conteoBytes(archivo));
+            ficheroGrande(args[0], bytes_grande, ficheroMasGrande);
+            ficheroReciente(args[0], byte_reciente);
 
 
         }catch (Exception e){
@@ -47,14 +53,11 @@ public  class Inventario{
             System.out.println("No es una carpeta que podamos recorres. Pon una carpeta.");
             return;
         }*/
-
         File[] elementos=carpeta.listFiles();
-
         if(elementos==null){
             System.out.println("carpeta vacía");
             return;
         }
-
         for (File f:elementos){
             if(f.isFile()){
                 System.out.println("Fichero: "+f.getName());
@@ -63,10 +66,8 @@ public  class Inventario{
                 System.out.println("Carpeta: "+f.getName());
                 directoriosTotal++;
                 contar(f.getAbsolutePath());
-
             }
         }
-
     }
 
     static String conteoBytes(File f){
@@ -76,20 +77,54 @@ public  class Inventario{
         if(bytes_totales>1024 && bytes_totales<1048576){
             kb=bytes_totales/1024;
             return "El archivo tiene "+kb+" Kb";
-
         }else if(bytes_totales>1048576){
             mb=bytes_totales/1048576;
             return "El archivo tiene "+mb+" Mb";
-
         }
         return "Archivo vacio";
     }
 
-    static void ficheroGrande(File carpeta){
+    static void ficheroGrande(String ruta, long bytes_grande,String ficheroMasGrande){
+
+         long bytes_actual=-1;
+        File carpeta=new File(ruta);
         if (carpeta.isFile()){
             System.out.println("Es un archivo unico.");
+            return;
         }
+        File[] elementos=carpeta.listFiles();
+        for(int i=0;i<elementos.length;i++){
+            if (elementos[i].isFile()){
+                bytes_actual=elementos[i].length();
+                if(bytes_actual>bytes_grande){
+                    bytes_grande=bytes_actual;
+                    ficheroMasGrande=elementos[i].getName();
+                }
+            }else {
+                ficheroGrande(elementos[i].getAbsolutePath(),bytes_grande,ficheroMasGrande);
+            }
+        }
+        System.out.println(ficheroMasGrande);
+    }
 
+    public static void ficheroReciente(String ruta,long byte_reciente){
+        long bytes_actual=-1;
+        File carpeta=new File(ruta);
+        if (carpeta.isFile()){
+            System.out.println("Es un archivo unico.");
+            return ;
+        }
+        File[] elementos=carpeta.listFiles();
+        for (File f:elementos){
+            if(f.isFile()&&f.lastModified()>bytes_actual){
+                bytes_actual=f.lastModified();
+                masReciente=f;
+        }else if(f.isDirectory()){
+                ficheroReciente(ruta,byte_reciente);
+
+            }
+        }
+        System.out.println("El archivo más reciente es: "+masReciente.getName());
     }
 
 
