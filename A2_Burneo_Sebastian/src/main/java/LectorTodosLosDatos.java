@@ -8,8 +8,28 @@ import java.sql.SQLOutput;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class LectorDatos{
-String path="datos/archivo.txt";
+public class LectorTodosLosDatos{
+String path=obtenerRuta();
+
+    static String obtenerRuta(){
+        try{
+            Path rutaClase=Path.of(LectorTodosLosDatos.class.getProtectionDomain().
+            getCodeSource().getLocation().
+            toURI());
+
+            Path rutaActual=rutaClase;
+            while(rutaActual !=null && !rutaActual.getFileName().toString().equals("A2_Burneo_Sebastian") ){
+                rutaActual=rutaActual.getParent();
+            }
+            
+                return rutaActual.resolve("datos/archivo.txt").toAbsolutePath().toString();
+            
+
+
+        }catch(Exception e){
+          return "datos/archivo.txt";  
+        }
+    }
     void main() throws FileNotFoundException {
         long inicio1=System.nanoTime();
         lecturaByteAByte(path);
