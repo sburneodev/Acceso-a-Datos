@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pedidos>
+    <pedido fecha="2026-03-15" numero="1">
+        <cliente id="7">Ferretería Sol</cliente>
+        <lineas>
+            <linea articulo="Tornillo" precioUnitario="0.25" unidades="10"/>
+            <linea articulo="Tuerca" precioUnitario="0.1" unidades="20"/>
+        </lineas>
+    </pedido>
+    <pedido fecha="2026-03-16" numero="2">
+        <cliente id="9">Muñoz &amp; Hijos, S.L.</cliente>
+        <lineas>
+            <linea articulo="Martillo" precioUnitario="12.5" unidades="1"/>
+        </lineas>
+    </pedido>
+    <pedido fecha="2026-03-17" numero="3">
+        <cliente id="12">Suministros Pérez</cliente>
+        <lineas>
+            <linea articulo="Tornillo de 3&quot; galvanizado" precioUnitario="0.35" unidades="100"/>
+        </lineas>
+    </pedido>
+    <pedido fecha="2026-03-18" numero="4">
+        <cliente id="15">Almacenes Núñez</cliente>
+        <lineas/>
+    </pedido>
+    <pedido fecha="2026-03-19" numero="5">
+        <cliente id="7">Ferretería Sol</cliente>
+        <lineas>
+            <linea articulo="Cable" precioUnitario="12.999999999" unidades="3"/>
+        </lineas>
+    </pedido>
+</pedidos>

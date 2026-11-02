@@ -1,0 +1,7 @@
+numero,fecha,clienteId,clienteNombre,articulo,unidades,precioUnitario
+1,2026-03-15,7,Ferretería Sol,Tornillo,10,0.25
+1,2026-03-15,7,Ferretería Sol,Tuerca,20,0.1
+2,2026-03-16,9,"Muñoz & Hijos, S.L.",Martillo,1,12.5
+3,2026-03-17,12,Suministros Pérez,"Tornillo de 3"" galvanizado",100,0.35
+4,2026-03-18,15,Almacenes Núñez,,,
+5,2026-03-19,7,Ferretería Sol,Cable,3,12.999999999

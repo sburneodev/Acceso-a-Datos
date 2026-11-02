@@ -1,0 +1,40 @@
+[{
+    "numero": 1,
+    "fecha": "2026-03-15",
+    "cliente": {"id": 7, "nombre": "Ferretería Sol"},
+    "lineas": [
+      {"articulo": "Tornillo", "unidades": 10, "precioUnitario": 0.25},
+      {"articulo": "Tuerca", "unidades": 20, "precioUnitario": 0.1}
+    ]
+  },
+  {
+    "numero": 2,
+    "fecha": "2026-03-16",
+    "cliente": {"id": 9, "nombre": "Muñoz & Hijos, S.L."},
+    "lineas": [
+      {"articulo": "Martillo", "unidades": 1, "precioUnitario": 12.5}
+    ]
+  },
+  {
+    "numero": 3,
+    "fecha": "2026-03-17",
+    "cliente": {"id": 12, "nombre": "Suministros Pérez"},
+    "lineas": [
+      {"articulo": "Tornillo de 3\" galvanizado", "unidades": 100, "precioUnitario": 0.35}
+    ]
+  },
+  {
+    "numero": 4,
+    "fecha": "2026-03-18",
+    "cliente": {"id": 15, "nombre": "Almacenes Núñez"},
+    "lineas": []
+  },
+  {
+    "numero": 5,
+    "fecha": "2026-03-19",
+    "cliente": {"id": 7, "nombre": "Ferretería Sol"},
+    "lineas": [
+      {"articulo": "Cable", "unidades": 3, "precioUnitario": 12.999999999}
+    ]
+  }
+]
