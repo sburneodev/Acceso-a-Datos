@@ -1,0 +1,18 @@
+Pasar de CSV a txt
+Leer resumir y guardar con NIO como A5
+Comprobar que existe y sus tamaño en bytes
+Crear carpeta salida si no existe con Files createdirectories
+Arryalist con thro IOExc con UTF (con o sin br)
+Linea es valida si tiene 6 campos. Si hay rotas que no paren. Se cuenta numeración y cuenta booleans
+Todos los resultados a TXT con utf8 con incidencias abiertas(false) cerradas(true) y rotas
+Porque has leído de esa manera y no con randomacessfile. Error
+
+Pasar de CSV a XML con JAXB con POJO
+pasar de CSV a XML con prueba automática y que se vea que no pierde nada. 
+Usa lector incidenia del otro ej.
+JaxB con marshaler
+conversor rutas
+Si escribe error como se captura
+
+
+Prueba Junit con al menos un test
