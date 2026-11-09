@@ -1,0 +1,11 @@
+id;fecha;aula;equipo;descripcion;estado
+1;2026-11-02;A101;PC-01;No enciende la pantalla;ABIERTA
+2;2026-11-02;B204;Proyector;Imagen con rayas;CERRADA
+3;2026-11-03;A101;PC-07;Teclado sin la tecla ñ;ABIERTA
+
+4;2026-11-04;Aula Magna;Altavoz;Sonido distorsionado;CERRADA
+x5;2026-11-04;B204;PC-03;Ratón roto;ABIERTA
+6;2026-11-05;A101;Impresora;Atasco de papel;CERRADA
+7;2026-11-05;B204;PC-12;Faltan campos
+8;2026-11-06;C010;Router;Sin conexión a Internet;ABIERTA
+9;2026-11-06;Aula Magna;Micrófono;Pila agotada;ABIERTA

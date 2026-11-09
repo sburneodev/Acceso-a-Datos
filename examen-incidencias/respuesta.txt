@@ -1,0 +1,5 @@
+BORRADOR - reescríbelo con tus palabras (3 a 6 líneas) antes de entregar.
+
+1) Leo el CSV de forma secuencial con Files.readAllLines (NIO) y no con RandomAccessFile porque: (a) es un fichero de texto con líneas de longitud variable, así que no hay posiciones fijas a las que saltar con seek() y hay que recorrerlo entero de todos modos; (b) RandomAccessFile trabaja con bytes y su readLine() no decodifica UTF-8, por lo que las tildes y eñes saldrían mal, mientras que readAllLines recibe StandardCharsets.UTF_8; y además NIO abre y cierra el fichero en una sola llamada.
+
+2) El programa escribe "ERROR: no encuentra el archivo" cuando Files.exists(Path.of("datos", "incidencias.csv")) da false (o salta NoSuchFileException): la ruta es relativa al directorio de trabajo, así que si se ejecuta desde otra carpeta o falta datos/incidencias.csv no lo encuentra; lo comprobamos y avisamos por System.out en vez de dejar que el programa reviente.
