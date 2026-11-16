@@ -1,41 +1,41 @@
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.sql.*;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Properties;
 
 public class PruebaConexion {
-    private static final Properties prop=new Properties();
-    
 
-    public static void getConnection(){
-        String url;
-        String user;
-        String password;
-        try(FileInputStream fis=new FileInputStream("./resources/db.properties")){
-            prop.load(fis);
-             url=prop.getProperty("url");
-             user=prop.getProperty("user");
-             password=prop.getProperty("password");
-            try(Connection con=DriverManager.getConnection(url,user,password)){
-                DatabaseMetaData meta=con.getMetaData();
-                String driver=meta.getDriverName();
-                String driverName=meta.getDriverVersion();
+    public static void main(String[] args) {
+        Properties prop = new Properties();
 
-                System.out.println("Conexion a la base de datos [OK]");
-                System.out.println("Driver: "+driver);
-                System.out.println("Driver name: "+driverName);
+        try (InputStream is = PruebaConexion.class.getClassLoader()
+                .getResourceAsStream("db.properties")) {
 
-            }catch(SQLException e){
-                System.out.println("Error al conectar"+e);
-
+            if (is == null) {
+                System.out.println("No se encontró db.properties");
+                return;
             }
-        }catch(IOException e){
-            System.out.println("Error al cargar el archivo:"+e.getMessage());
-        }
-    }
+            prop.load(is);
 
-    static void main(String[] args) {
-        getConnection();
+        } catch (IOException e) {
+            System.out.println("Error al leer db.properties: " + e.getMessage());
+            return;
+        }
+
+        String url = prop.getProperty("db.url");
+        String user = prop.getProperty("db.user");
+        String password = prop.getProperty("db.password");
+
+        try (Connection con = DriverManager.getConnection(url, user, password)) {
+            DatabaseMetaData meta = con.getMetaData();
+            System.out.println("Conexión OK");
+            System.out.println("Base de datos: " + meta.getDatabaseProductName());
+            System.out.println("Versión: " + meta.getDatabaseProductVersion());
+        } catch (SQLException e) {
+            System.out.println("No se pudo conectar: " + e.getMessage());
+        }
     }
 }

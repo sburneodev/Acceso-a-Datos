@@ -144,24 +144,62 @@ Los del tema 3 **cambian la tabla `empleados`** (y `CrearTabla` deja creada
 | Mensaje | Qué pasa |
 |---|---|
 | `Communications link failure` | La base de datos no está levantada: `docker compose up -d` |
-| `Access denied for user 'root'` | La contraseña no es `root`, o quedó un MySQL viejo: `docker compose down -v` y vuelve a subir |
-| `Unknown database 'empresa'` | El contenedor arrancó sin ejecutar `sql/`. Se arregla con `docker compose down -v` y `up -d` |
+| `Access denied for user 'root'` | **Casi siempre: te está contestando el MySQL instalado en tu Windows**, no el del laboratorio. Ver «Si tienes MySQL instalado en Windows», abajo. Si no lo tienes, quedó un MySQL viejo: `docker compose down -v` y vuelve a subir |
+| `Unknown database 'empresa'` | **Lo mismo: estás conectado a OTRO MySQL** (el de Windows), que no tiene la base de las prácticas. Ver abajo. Si de verdad es el del laboratorio, arrancó sin ejecutar `sql/`: `docker compose down -v` y `up -d` |
 | `Public Key Retrieval is not allowed` | Falta `allowPublicKeyRetrieval=true` en la URL. Las clases ya lo llevan |
-| `port is already allocated` | Tienes otro MySQL en el 3306. Ver el apartado siguiente |
+| `port is already allocated` | Tienes otro MySQL en el 3306. Ver «Si tienes MySQL instalado en Windows», abajo |
 | `error: invalid source release: 25` | El JDK del proyecto no es el 25. *Project Structure → Project → SDK* |
 
-### Si el puerto 3306 está ocupado
+### Si tienes MySQL instalado en Windows
 
-Es lo más habitual si ya tenías MySQL instalado en Windows. Se cambia en dos
-sitios, y **tienen que coincidir**:
+Es lo más habitual en segundo: el MySQL que instalaste en primero sigue arrancado
+como servicio y **ocupa el 3306**. Entonces pasa una de estas dos cosas:
+
+- `docker compose up -d` falla con `port is already allocated` o
+  `ports are not available`, y el laboratorio no arranca; o
+- el laboratorio arranca, pero **tu programa se conecta al MySQL de Windows**, que
+  no tiene la base `empresa` ni la contraseña `root`: sale `Unknown database
+  'empresa'` o `Access denied`, aunque `docker compose ps` diga `healthy`.
+
+**Para saber cuál te contesta**, ejecuta `comprobar.bat`: si dice
+`responde un MySQL 8.0… y el del laboratorio es el 8.4`, es el de Windows.
+
+Elige **una** de estas tres salidas:
+
+**1. Parar el MySQL de Windows (la más sencilla, no cambia nada del proyecto).**
+Tecla Windows → `services.msc` → busca **MySQL80** (o MySQL84…) → clic derecho →
+**Detener**. Para que no vuelva a arrancar solo: doble clic → *Tipo de inicio:*
+**Manual**. Después, en la carpeta del proyecto, `docker compose up -d`. Cuando
+quieras volver a usar tu MySQL, lo inicias desde el mismo sitio.
+
+**2. Llevar el laboratorio a otro puerto, el 3307.** Se cambia en tres sitios, y
+**tienen que coincidir**:
 
 1. En `docker-compose.yml`, el número de la **izquierda**:
-   `- "127.0.0.1:3307:3306"`.
-2. En el código, la constante `URL` de cada clase, y en
-   `src/main/resources/db.properties`.
+   `- "127.0.0.1:3307:3306"`. El de la derecha, el 3306, es el puerto **dentro**
+   del contenedor y no se toca nunca.
+2. En `src/main/resources/db.properties`: `localhost:3307`.
+3. En el código, la constante `URL` de cada clase que vayas a ejecutar.
 
-El de la derecha del compose, el 3306, es el puerto **dentro** del contenedor y
-no se toca nunca.
+Y en tu proyecto de la actividad (la `biblioteca`), lo mismo en su `db.properties`.
+
+**3. Usar tu MySQL de Windows en vez del contenedor.** Vale igual, pero tienes que
+crear tú la base, porque esos scripts solo los ejecuta el contenedor:
+
+- Con **MySQL Workbench**: conéctate como `root`, *File → Open SQL Script…* →
+  `sql\01_esquema.sql` → el rayo (ejecutar); y lo mismo con
+  `sql\02_procedimientos.sql`. En ese orden.
+- O desde una terminal en la carpeta del proyecto (PowerShell no admite `<`, por
+  eso va dentro de `cmd /c`):
+
+  ```
+  cmd /c "mysql -u root -p < sql\01_esquema.sql"
+  cmd /c "mysql -u root -p < sql\02_procedimientos.sql"
+  ```
+
+Después pon **tu** contraseña de `root` en `db.properties` (y en las clases que
+la lleven escrita). Comprueba con `conexion.TestConexion`: tiene que listar los
+cuatro empleados.
 
 ## 6. Cuando termines
 

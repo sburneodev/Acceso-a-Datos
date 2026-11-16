@@ -20,7 +20,7 @@ services:
       # IZQUIERDA: el puerto en TU ordenador. Si el 3306 esta ocupado por
       # un MySQL que ya tengas instalado, cambialo aqui (por ejemplo 3307)
       # Y en la constante URL de las clases Java.
-      - "127.0.0.1:3307:3307"
+      - "127.0.0.1:3307:3306"
     volumes:
       - mysql-ra2-datos:/var/lib/mysql
       - ./sql:/docker-entrypoint-initdb.d:ro

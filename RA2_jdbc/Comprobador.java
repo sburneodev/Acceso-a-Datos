@@ -259,7 +259,11 @@ public class Comprobador {
             int puerto = hp.group(2) != null ? Integer.parseInt(hp.group(2)) : puertoPorDefecto(motor);
             if (!vistos.add(host + ":" + puerto)) continue;   // ya se ha comprobado
             if (responde(host, puerto)) {
-                ok(motor + " responde en " + host + ":" + puerto);
+                if (motor.equals("mysql") || motor.equals("mariadb")) {
+                    comprobarQueMysqlEs(host, puerto);
+                } else {
+                    ok(motor + " responde en " + host + ":" + puerto);
+                }
             } else {
                 aviso(motor + " NO responde en " + host + ":" + puerto,
                       "Levanta el entorno del modulo antes de ejecutar el proyecto:",
@@ -440,6 +444,61 @@ public class Comprobador {
             case "exist" , "xmldb" -> 8080;
             default -> 0;
         };
+    }
+
+    /**
+     * Que responda algo en el puerto no basta: si el alumno tiene MySQL instalado en
+     * Windows, el 3306 lo contesta ESE MySQL y no el del laboratorio, que no tiene la
+     * base de las practicas (Unknown database) ni la contrasena root (Access denied).
+     * MySQL dice su version nada mas conectar, sin usuario: se compara con la imagen
+     * del docker-compose.yml del proyecto (mysql:8.4 -> tiene que empezar por 8.4).
+     */
+    static void comprobarQueMysqlEs(String host, int puerto) {
+        String version = versionMysql(host, puerto);
+        String esperada = null;
+        Pattern img = Pattern.compile("image:\\s*[\"']?mysql:([0-9]+(?:\\.[0-9]+)?)");
+        for (Path c : buscar(raiz, ".yml")) {
+            String n = c.getFileName().toString();
+            if (!n.startsWith("docker-compose") && !n.startsWith("compose")) continue;
+            Matcher m = img.matcher(sinComentarios(c));
+            if (m.find()) { esperada = m.group(1); break; }
+        }
+        if (version == null) {
+            aviso("En " + host + ":" + puerto + " responde algo, pero no contesta como MySQL",
+                  "Tienes ese puerto ocupado por otro programa.");
+        } else if (esperada == null || version.startsWith(esperada + ".") || version.equals(esperada)) {
+            ok("MySQL " + version + " responde en " + host + ":" + puerto);
+        } else {
+            error("En " + host + ":" + puerto + " responde un MySQL " + version
+                  + ", y el del laboratorio es el " + esperada,
+                  "Ese es OTRO MySQL: casi seguro el que tienes instalado en Windows.",
+                  "No tiene la base de las practicas ni la contrasena root: daria",
+                  "\"Unknown database\" o \"Access denied\". Tres salidas (README, \"Si algo falla\"):",
+                  "  1. Parar el de Windows: services.msc > MySQL80 > Detener (y Tipo de inicio: Manual),",
+                  "     y despues  docker compose up -d",
+                  "  2. Llevar el laboratorio al 3307: en docker-compose.yml \"127.0.0.1:3307:3306\"",
+                  "     y en db.properties y en las URL del codigo, localhost:3307",
+                  "  3. Usar tu MySQL: ejecuta en el los scripts de sql/ y pon tu contrasena en db.properties");
+        }
+    }
+
+    /** La version que MySQL anuncia en su saludo inicial (antes de pedir usuario), o null. */
+    static String versionMysql(String host, int puerto) {
+        try (Socket s = new Socket()) {
+            s.connect(new InetSocketAddress(host, puerto), 1500);
+            s.setSoTimeout(2000);
+            InputStream in = s.getInputStream();
+            byte[] cab = in.readNBytes(4);
+            if (cab.length < 4) return null;
+            int largo = (cab[0] & 0xff) | (cab[1] & 0xff) << 8 | (cab[2] & 0xff) << 16;
+            byte[] cuerpo = in.readNBytes(Math.min(largo, 256));
+            if (cuerpo.length < 2 || cuerpo[0] != 10) return null;   // 10 = protocolo de MySQL
+            int fin = 1;
+            while (fin < cuerpo.length && cuerpo[fin] != 0) fin++;
+            return new String(cuerpo, 1, fin - 1, java.nio.charset.StandardCharsets.US_ASCII);
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     static boolean responde(String host, int puerto) {
