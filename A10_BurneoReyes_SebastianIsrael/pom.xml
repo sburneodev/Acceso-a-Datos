@@ -9,11 +9,26 @@
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
+
         <!-- Driver de MySQL. Ojo al groupId: es com.mysql, no mysql -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <version>26.7.0</version>
+        </dependency>
+
+        <!-- Pool de conexiones que se usa en la actividad 2 -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>7.1.0</version>
+        </dependency>
+
+        <!-- HikariCP registra por SLF4J; sin una implementacion, avisa por consola -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.17</version>
         </dependency>
 
     </dependencies>
