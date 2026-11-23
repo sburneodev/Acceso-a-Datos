@@ -2,11 +2,13 @@ package com.DAO;
 
 import com.Conexiones;
 import com.Libro;
+import com.Socio;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LibroDAO {
@@ -89,6 +91,26 @@ public class LibroDAO {
     new Libro("Fahrenheit 451", "Ray Bradbury", 1953, 5)
 );
     * */
+
+    public static List<Libro> librosDisponibles() throws SQLException {
+        List<Libro> libros = new ArrayList<>();
+        String sql="SELECT * FROM libros WHERE ejemplares>0";
+        try(Connection con = Conexiones.getConexion();
+        PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs= ps.executeQuery()){
+            while(rs.next()){
+                int id=rs.getInt("id");
+                String titulo=rs.getString("titulo");
+                String autor=rs.getString("autor");
+                int anio=rs.getInt("anio");
+                int ejemplares=rs.getInt("ejemplares");
+                Libro l=new Libro(id,titulo,autor,anio,ejemplares);
+                libros.add(l);
+            }
+        }
+        return libros;
+    }
+
 
     }
 
