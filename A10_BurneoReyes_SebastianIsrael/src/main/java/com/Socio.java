@@ -3,12 +3,12 @@ package com;
 import java.time.LocalDate;
 
 public class Socio {
-public int id;
+public Integer id;
 public String nombre;
 public String telefono;
 public LocalDate fechaAlta;
 
-    public Socio(int id, String nombre, String telefono, LocalDate fechaAlta) {
+    public Socio(Integer id, String nombre, String telefono, LocalDate fechaAlta) {
         this.id = id;
         this.nombre = nombre;
         this.telefono = telefono;

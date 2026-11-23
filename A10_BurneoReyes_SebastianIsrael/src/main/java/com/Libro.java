@@ -1,13 +1,13 @@
 package com;
 
 public class Libro {
-    private int id;
+    private Integer id;
     private String titulo;
     private String autor;
     private int anio;
     private int ejemplares;
 
-    public Libro(int id, String titulo, String autor, int anio, int ejemplares) {
+    public Libro(Integer id, String titulo, String autor, int anio, int ejemplares) {
         this.id = id;
         this.titulo = titulo;
         this.autor = autor;

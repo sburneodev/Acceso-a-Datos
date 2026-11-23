@@ -60,9 +60,18 @@ public class LibroDAO {
     * */
 
     public static int cargarCatalogo(List<Libro> libros) throws SQLException {
-        String sql = "INSERT INTO libros(titulo, autor, anio, ejemplares) VALUES (?, ?, ?, ?)";
+        String sql="Select count(*) from libros;";
+        try(Connection con=Conexiones.getConexion();
+        PreparedStatement ps=con.prepareStatement(sql);
+        ResultSet rs=ps.executeQuery()){
+            rs.next();
+            if(rs.getInt(1)!=0){
+                return 0;
+            }
+        }
+        String sql2 = "INSERT INTO libros(titulo, autor, anio, ejemplares) VALUES (?, ?, ?, ?)";
         try (Connection con = Conexiones.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql2)) {
 
             for (Libro libro : libros) {
                 ps.setString(1, libro.getTitulo());
@@ -76,21 +85,8 @@ public class LibroDAO {
             return resultados.length;
         }
     }
-    /*Hacer esto en el main para el catalogo
-    *
-    * List<Libro> catalogo = List.of(
-    new Libro("Don Quijote de la Mancha", "Miguel de Cervantes", 1605, 3),
-    new Libro("Cien años de soledad", "Gabriel García Márquez", 1967, 2),
-    new Libro("La sombra del viento", "Carlos Ruiz Zafón", 2001, 4),
-    new Libro("1984", "George Orwell", 1949, 2),
-    new Libro("El señor de los anillos", "J. R. R. Tolkien", 1954, 1),
-    new Libro("Orgullo y prejuicio", "Jane Austen", 1813, 2),
-    new Libro("La casa de los espíritus", "Isabel Allende", 1982, 3),
-    new Libro("Crimen y castigo", "Fiódor Dostoyevski", 1866, 1),
-    new Libro("El nombre de la rosa", "Umberto Eco", 1980, 2),
-    new Libro("Fahrenheit 451", "Ray Bradbury", 1953, 5)
-);
-    * */
+
+
 
     public static List<Libro> librosDisponibles() throws SQLException {
         List<Libro> libros = new ArrayList<>();
