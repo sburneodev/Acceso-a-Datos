@@ -13,6 +13,16 @@ public class Main {
 
     private static final Scanner sc = new Scanner(System.in);
 
+    private static final List<String> menu = List.of(
+            "Alta de socio",
+            "Alta de libro",
+            "Baja de libro",
+            "Libros disponibles",
+            "Préstamos de un socio",
+            "Prestar un libro",
+            "Devolver un libro"
+    );
+
     public static List<Libro> catalogo = List.of(
             new Libro(null,"Don Quijote de la Mancha", "Miguel de Cervantes", 1605, 3),
             new Libro(null,"Cien años de soledad", "Gabriel García Márquez", 1967, 2),
@@ -44,6 +54,8 @@ public class Main {
                 case 3 -> bajaLibro();
                 case 4 -> librosDisponibles();
                 case 5 -> prestamosSocio();
+                case 6->prestarLibro();
+                case 7->devolverLibro();
                 case 0 -> System.out.println("Saliendo...");
                 default -> System.out.println("Opción no válida");
             }
@@ -54,12 +66,10 @@ public class Main {
 
     private static void mostrarMenu() {
         System.out.println();
-        System.out.println("===== BIBLIOTECA =====");
-        System.out.println("1. Alta de socio");
-        System.out.println("2. Alta de libro");
-        System.out.println("3. Baja de libro");
-        System.out.println("4. Libros disponibles");
-        System.out.println("5. Préstamos de un socio");
+        System.out.println("_______BIBLIOTECA _______");
+        for (int i = 0; i < menu.size(); i++) {
+            System.out.println((i + 1) + ". " + menu.get(i));
+        }
         System.out.println("0. Salir");
     }
 
@@ -132,7 +142,7 @@ public class Main {
         int idSocio = leerEntero("Id del socio: ");
 
         try {
-            List<Prestamo> prestamos = PrestamoDAO.prestamosSocios(idSocio);
+            List<Prestamo> prestamos = PrestamoDAO.getPrestamosSocios(idSocio);
             if (prestamos.isEmpty()) {
                 System.out.println("El socio " + idSocio + " no tiene préstamos");
                 return;
@@ -168,6 +178,34 @@ public class Main {
                 return linea;
             }
             System.out.println("No puede estar vacío");
+        }
+    }
+
+    private static void prestarLibro() {
+        int idSocio = leerEntero("Id del socio: ");
+        int idLibro = leerEntero("Id del libro: ");
+
+        try {
+            PrestamoDAO.prestar(idSocio, idLibro);
+            System.out.println("Préstamo realizado");
+        } catch (SQLException e) {
+            if (e.getErrorCode() == 1452) {
+                System.out.println("No se puede prestar: ese socio no existe");
+            } else {
+                System.out.println("No se ha podido prestar: " + e.getMessage());
+            }
+        }
+    }
+
+
+    private static void devolverLibro() {
+        int idPrestamo = leerEntero("Id del préstamo: ");
+
+        try {
+            PrestamoDAO.devolver(idPrestamo);
+            System.out.println("Libro devuelto");
+        } catch (SQLException e) {
+            System.out.println("No se ha podido devolver: " + e.getMessage());
         }
     }
 }
