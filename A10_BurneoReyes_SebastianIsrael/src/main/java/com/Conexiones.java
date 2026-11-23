@@ -1,3 +1,5 @@
+package com;
+
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -26,7 +28,7 @@ public class Conexiones{
 
     private static final HikariDataSource POOL = crearPool();
 
-    private Conexiones() { }//Así nadie podra crear Conexiones.
+    private Conexiones() { }//Así nadie podra crear com.Conexiones.
 
     static {
         Runtime.getRuntime().addShutdownHook(new Thread(Conexiones::cerrar));

@@ -1,3 +1,5 @@
+package com;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -30,6 +32,7 @@ public static void crearTablas(){
                 "    CONSTRAINT fk_prestamos_libro FOREIGN KEY (id_libro) REFERENCES libros(id)\n" +
                 ") ENGINE=InnoDB");
         st.executeBatch();
+        System.out.println("Tablas creadas");
     }catch (SQLException e){
         System.out.println("Error al crear las tablas: "+e.getMessage());
     }
@@ -42,6 +45,7 @@ public static  void borrarTablas(){
         st.addBatch("DROP TABLE IF EXISTS libros");
         st.addBatch("DROP TABLE IF EXISTS socios");
         st.executeBatch();
+        System.out.println("Tablas borrado");
     }catch (SQLException e){
         System.out.println("Error al borrar las tablas: "+e.getMessage());
     }
