@@ -2,8 +2,6 @@ package com.DAO;
 
 import com.Conexiones;
 import com.Libro;
-import com.Socio;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -41,23 +39,6 @@ public class LibroDAO {
             }
         }
 
-         /*Añadir al main esto cuando vaya a usarse
-    *
-    * try {
-    int filas = LibroDAO.bajaLibro(id);
-    if (filas == 0) {
-        System.out.println("No se ha borrado nada: el libro " + id + " no existía");
-    } else {
-        System.out.println("Filas borradas: " + filas);
-    }
-} catch (SQLException e) {
-    if (e.getErrorCode() == 1451) {
-        System.out.println("No se puede borrar el libro " + id + ": tiene préstamos");
-    } else {
-        System.out.println("Error al borrar el libro: " + e.getMessage());
-    }
-}
-    * */
 
     public static int cargarCatalogo(List<Libro> libros) throws SQLException {
         String sql="Select count(*) from libros;";
@@ -107,6 +88,19 @@ public class LibroDAO {
         return libros;
     }
 
+    public static int ejemplaresDe(int idLibro) throws SQLException {
+        String sql = "SELECT ejemplares FROM libros WHERE id = ?";
+        try (Connection con = Conexiones.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idLibro);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+                throw new SQLException("El libro " + idLibro + " no existe");
+            }
+        }
+    }
 
     }
 

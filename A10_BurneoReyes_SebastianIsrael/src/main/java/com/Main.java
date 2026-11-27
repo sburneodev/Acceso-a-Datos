@@ -5,6 +5,7 @@ import com.DAO.PrestamoDAO;
 import com.DAO.SocioDAO;
 
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
@@ -20,7 +21,8 @@ public class Main {
             "Libros disponibles",
             "Préstamos de un socio",
             "Prestar un libro",
-            "Devolver un libro"
+            "Devolver un libro",
+            "¿Cuántos libros tiene este socio?"
     );
 
     public static List<Libro> catalogo = List.of(
@@ -56,6 +58,7 @@ public class Main {
                 case 5 -> prestamosSocio();
                 case 6->prestarLibro();
                 case 7->devolverLibro();
+                case 8->librosSinDevolver();
                 case 0 -> System.out.println("Saliendo...");
                 default -> System.out.println("Opción no válida");
             }
@@ -113,7 +116,7 @@ public class Main {
                 System.out.println("Filas borradas: " + filas);
             }
         } catch (SQLException e) {
-            if (e.getErrorCode() == 1451) {
+            if (e instanceof SQLIntegrityConstraintViolationException) {
                 System.out.println("No se puede borrar el libro " + id + ": tiene préstamos");
             } else {
                 System.out.println("Error al borrar el libro: " + e.getMessage());
@@ -149,7 +152,7 @@ public class Main {
             }
             System.out.println("--- Préstamos del socio " + idSocio + " ---");
             for (Prestamo p : prestamos) {
-                System.out.println(p.getTitulo() + " | prestado el " + p.getFechaPrestamo()
+                System.out.println(p.getId() + " | " + p.getTitulo() + " | prestado el " + p.getFechaPrestamo()
                         + " | " + (p.isDevuelto() ? "Devuelto el " + p.getFechaDevolucion() : "Pendiente"));
             }
         } catch (SQLException e) {
@@ -186,10 +189,10 @@ public class Main {
         int idLibro = leerEntero("Id del libro: ");
 
         try {
-            PrestamoDAO.prestar(idSocio, idLibro);
+            PrestamoDAO.prestar(idSocio, idLibro,false);
             System.out.println("Préstamo realizado");
         } catch (SQLException e) {
-            if (e.getErrorCode() == 1452) {
+            if (e instanceof SQLIntegrityConstraintViolationException) {
                 System.out.println("No se puede prestar: ese socio no existe");
             } else {
                 System.out.println("No se ha podido prestar: " + e.getMessage());
@@ -206,6 +209,17 @@ public class Main {
             System.out.println("Libro devuelto");
         } catch (SQLException e) {
             System.out.println("No se ha podido devolver: " + e.getMessage());
+        }
+    }
+
+    private static void librosSinDevolver() {
+        int idSocio = leerEntero("Id del socio: ");
+
+        try {
+            int n = PrestamoDAO.prestamosActivos(idSocio);
+            System.out.println("El socio " + idSocio + " tiene " + n + " libro(s) sin devolver");
+        } catch (SQLException e) {
+            System.out.println("No se ha podido consultar: " + e.getMessage());
         }
     }
 }

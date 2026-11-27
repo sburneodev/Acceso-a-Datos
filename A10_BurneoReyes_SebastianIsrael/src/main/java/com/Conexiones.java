@@ -17,16 +17,18 @@ public class Conexiones{
     */
     public static final int maxPool=5;
 
-    //Minimo dos conexiones a la espera por defecto
+    //Minimo dos conexiones a la espera
     public static final int minIdle=2;
 
-    //30 s por defecto para cerrar conexión si no hay uso.
+    //30 s  para cerrar conexión si no hay uso.
     public static final int idleTimeout=30000;
 
     //30 min de vida maxima de la conexión.
     public static final int maxLifeCic=1800000;
 
     private static final HikariDataSource POOL = crearPool();
+
+    private static Boolean esH2;
 
     private Conexiones() { }//Así nadie podra crear com.Conexiones.
 
@@ -73,6 +75,15 @@ public class Conexiones{
         if (!POOL.isClosed()) {
             POOL.close();
         }
+    }
+
+    public static boolean esH2() throws SQLException {
+        if (esH2 == null) {
+            try (Connection con = getConexion()) {
+                esH2 = "H2".equals(con.getMetaData().getDatabaseProductName());
+            }
+        }
+        return esH2;
     }
 }
 

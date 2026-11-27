@@ -1,0 +1,53 @@
+=== 1. Estructura: se borra si existía y se crea de nuevo ===
+[main] INFO com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+[main] INFO com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:biblioteca user=SA
+[main] INFO com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+Tablas borrado
+Tablas creadas
+Base de datos: H2
+
+=== 2. Alta de dos socios y carga del catálogo en un lote ===
+Socio dado de alta: Ana López, id 1
+Socio dado de alta: Luis Martín, id 2
+Libros cargados en un lote: 10
+
+=== 3. Libros disponibles ===
+1 | Don Quijote de la Mancha | Miguel de Cervantes | 1605 | ejemplares: 3
+2 | Cien años de soledad | Gabriel García Márquez | 1967 | ejemplares: 2
+3 | La sombra del viento | Carlos Ruiz Zafón | 2001 | ejemplares: 4
+4 | 1984 | George Orwell | 1949 | ejemplares: 2
+5 | El señor de los anillos | J. R. R. Tolkien | 1954 | ejemplares: 1
+6 | Orgullo y prejuicio | Jane Austen | 1813 | ejemplares: 2
+7 | La casa de los espíritus | Isabel Allende | 1982 | ejemplares: 3
+8 | Crimen y castigo | Fiódor Dostoyevski | 1866 | ejemplares: 1
+9 | El nombre de la rosa | Umberto Eco | 1980 | ejemplares: 2
+10 | Fahrenheit 451 | Ray Bradbury | 1953 | ejemplares: 5
+
+=== 4. Préstamo correcto ===
+Préstamo hecho: socio 1, libro 5
+Ejemplares que quedan del libro 5: 0
+
+=== 5. Prestar un libro sin ejemplares ===
+No se ha podido prestar: El libro 5 no existe o no tiene ejemplares disponibles
+Ejemplares del libro 5: 0 (no ha bajado de 0)
+
+=== 6. Fallo provocado a mitad de un préstamo ===
+Antes:   ejemplares del libro 10 = 5, préstamos del socio 2 = 0
+El préstamo ha fallado: Fallo provocado a propósito entre los dos cambios
+Después: ejemplares del libro 10 = 5, préstamos del socio 2 = 0
+La base ha quedado exactamente como estaba: el rollback ha deshecho el UPDATE
+
+=== 7. Procedimiento: ¿cuántos libros tiene sin devolver? ===
+El socio 1 tiene 1 libro(s) sin devolver
+
+=== 8. Devolución y préstamos del socio ===
+Préstamo 1 devuelto
+Ejemplares del libro 5: 1
+1 | El señor de los anillos | prestado el 2026-11-27 | Devuelto el 2026-11-27
+Ahora el socio 1 tiene 0 libro(s) sin devolver
+
+=== 9. Se recoge la estructura ===
+Tablas borrado
+[main] INFO com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+[main] INFO com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+Pool cerrado. Fin de la demostración

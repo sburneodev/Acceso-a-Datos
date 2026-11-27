@@ -5,35 +5,35 @@ import com.Prestamo;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class PrestamoDAO {
 
     public static List<Prestamo> getPrestamosSocios(int idSocio) throws SQLException {
-        String sql = "select p.id, p.id_socio, p.id_libro, l.titulo, p.fecha_prestamo, p.fecha_devolucion " +
-                "from prestamos p JOIN libros l ON l.id=p.id_libro where id_socio=?";
+        String sql = "SELECT p.id AS id_prestamo, p.id_socio AS id_socio, p.id_libro AS id_libro, "
+                + "l.titulo AS titulo, p.fecha_prestamo AS fecha_prestamo, p.fecha_devolucion AS fecha_devolucion "
+                + "FROM prestamos p JOIN libros l ON l.id = p.id_libro "
+                + "WHERE p.id_socio = ?";
         List<Prestamo> prestamos = new ArrayList<>();
         try (Connection con = Conexiones.getConexion();
              PreparedStatement ps = con.prepareStatement(sql);) {
             ps.setInt(1, idSocio);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    LocalDate fechaDev;
-                    if (rs.getDate("p.fecha_devolucion") != null) {
-                        fechaDev = rs.getDate("p.fecha_devolucion").toLocalDate();
-                    } else {
-                        fechaDev = null;
+                    LocalDate fechaDev = null;
+                    if (rs.getDate("fecha_devolucion") != null) {
+                        fechaDev = rs.getDate("fecha_devolucion").toLocalDate();
                     }
 
-                    Prestamo p = new Prestamo(rs.getInt("p.id"), rs.getInt("p.id_socio"),
-                            rs.getInt("p.id_libro"), rs.getString("l.titulo"),
-                            rs.getDate("p.fecha_prestamo").toLocalDate(),
+                    Prestamo p = new Prestamo(
+                            rs.getInt("id_prestamo"),
+                            rs.getInt("id_socio"),
+                            rs.getInt("id_libro"),
+                            rs.getString("titulo"),
+                            rs.getDate("fecha_prestamo").toLocalDate(),
                             fechaDev);
                     prestamos.add(p);
-
                 }
             }
 
@@ -42,9 +42,9 @@ public class PrestamoDAO {
         }
     }
 
-    public static void prestar(int idSocio, int idLibro) throws SQLException {
-        String sqlPrestamo = "INSERT INTO prestamos(id_socio, id_libro, fecha_prestamo) VALUES (?, ?, ?) ";
-        String sqlUpdate = "UPDATE libros SET ejemplares=ejemplares-1 Where id=? AND ejemplares>0;";
+    public static void prestar(int idSocio, int idLibro,boolean fallo) throws SQLException {
+        String sqlPrestamo = "INSERT INTO prestamos(id_socio, id_libro, fecha_prestamo) VALUES (?, ?, ?)";
+        String sqlUpdate = "UPDATE libros SET ejemplares=ejemplares-1 WHERE id=? AND ejemplares>0";
         try (Connection con = Conexiones.getConexion()) {
             con.setAutoCommit(false);
             try  (PreparedStatement psUpdateLibro = con.prepareStatement(sqlUpdate);
@@ -53,13 +53,17 @@ public class PrestamoDAO {
                 psUpdateLibro.setInt(1, idLibro);
                 int rows = psUpdateLibro.executeUpdate();
                 if (rows == 0) {
-                    con.rollback();
-                    throw new SQLException("El libro " + idLibro + " no tiene ejemplares disponibles");
+                    throw new SQLException("El libro " + idLibro + " no existe o no tiene ejemplares disponibles");
+                }
+                // Fallo a propósito: el UPDATE ya se ha hecho y el INSERT todavía no.
+                // El catch hace rollback y la base queda como estaba.
+                if (fallo) {
+                    throw new SQLException("Fallo provocado a propósito entre los dos cambios");
                 }
                 psPrestamo.setInt(1, idSocio);
                 psPrestamo.setInt(2, idLibro);
                 psPrestamo.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
-                psPrestamo.executeQuery();
+                psPrestamo.execute();
                 con.commit();
             } catch (SQLException e) {
                 con.rollback();
@@ -99,6 +103,32 @@ public class PrestamoDAO {
 
         }
 
+    }
+
+    public static int prestamosActivos(int idSocio) throws SQLException{
+        int cantidadActivos=-1;
+        if (Conexiones.esH2()) {
+            // H2: la misma consulta que hace el procedimiento, lanzada desde Java
+            String sql = "SELECT COUNT(*) FROM prestamos WHERE id_socio = ? AND fecha_devolucion IS NULL";
+            try (Connection con = Conexiones.getConexion();
+                 PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, idSocio);
+                try (ResultSet rs = ps.executeQuery()) {
+                    rs.next();
+                   return rs.getInt(1);
+                }
+            }
+        }
+        try(Connection con=Conexiones.getConexion();
+        CallableStatement cs=con.prepareCall("{call prestamos_activos(?,?)}")){
+            cs.setInt(1,idSocio);
+            cs.registerOutParameter(2,Types.INTEGER);
+            cs.execute();
+
+            cantidadActivos=cs.getInt(2);
+
+        }
+        return cantidadActivos;
     }
 
 }
